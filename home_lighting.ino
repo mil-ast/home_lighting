@@ -1,4 +1,4 @@
-#define IS_DEBUG_MODE 0
+#define IS_DEBUG_MODE 1
 #define CORRIDOR_LIGHT_ON_DELAY 10000
 
 enum State {
@@ -7,21 +7,24 @@ enum State {
   STATE_WAIT,
 };
 
-const int maxLightLevel = 600; // макс значение датчика света для работы (0 темно, 1024 светло)
-const int lightPin = A6; // датчик света
+const int maxLightLevel = 600; // макс значение датчика света для работы (0 темно, 1023 светло)
+const int lightPin = A3; // датчик света
 const int pinSwitchCorridor = 5; // включатель коридора   PWM 5
 const int pinSwitchStairs = 6; // включатель лестницы     PWM 6
-const int pinMotionSensorCorridor1 = 2; // датчик движения коридора у лестницы
-const int pinMotionSensorCorridor2 = 3; // датчик движения коридора у санузла
+const int pinMotionSensorCorridor1 = 7; // датчик движения коридора у лестницы
+const int pinMotionSensorCorridor2 = 8; // датчик движения коридора у санузла
+const int pinMotionSensorStairs1 = 9; // датчик движения лестницы верх
+const int pinMotionSensorStairs2 = 10; // датчик движения лестницы низ
+
 int lightLevelCorridor = 0; // текущий уровень освещения коридора
-unsigned long corridorTimeOn = 0; // время включения света, чтобы отключить позже
+unsigned long corridorTimeOn = 0; // время включения света, чтобы отключить позжеё
 State corridorState;
 
 unsigned long lastLogTime = 0;
 
 void setup() {
   #if (IS_DEBUG_MODE == 1)
-    Serial.begin(9600);  
+    Serial.begin(9600);
   #endif
 
   corridorState = STATE_WAIT;
@@ -40,6 +43,12 @@ void loop() {
   int lightSensorValue = analogRead(lightPin);
   if (lightSensorValue > maxLightLevel) {
     if (corridorState == STATE_WAIT && lightLevelCorridor == 0) {
+      #if (IS_DEBUG_MODE == 1)
+        Serial.print("Sleep, lightSensorValue: ");
+        Serial.print(lightSensorValue);
+        Serial.print("\r\n");
+      #endif
+      
       delay(1000);
       return;
     }

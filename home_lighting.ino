@@ -1,5 +1,5 @@
-#define IS_DEBUG_MODE 1
-#define CORRIDOR_LIGHT_ON_DELAY 10000
+#define IS_DEBUG_MODE 0
+#define CORRIDOR_LIGHT_ON_DELAY 8000
 
 enum State {
   STATE_UP,
@@ -7,7 +7,7 @@ enum State {
   STATE_WAIT,
 };
 
-const int maxLightLevel = 600; // макс значение датчика света для работы (0 темно, 1023 светло)
+const int maxLightLevel = 300; // макс значение датчика света для работы (0 темно, 1023 светло)
 const int lightPin = A3; // датчик света
 const int pinSwitchCorridor = 5; // включатель коридора   PWM 5
 const int pinSwitchStairs = 6; // включатель лестницы     PWM 6
@@ -40,7 +40,7 @@ void setup() {
 
 void loop() {
   // если светло и свет отключен, то ожидаем
-  int lightSensorValue = analogRead(lightPin);
+  const int lightSensorValue = analogRead(lightPin);
   if (lightSensorValue > maxLightLevel) {
     if (corridorState == STATE_WAIT && lightLevelCorridor == 0) {
       #if (IS_DEBUG_MODE == 1)
@@ -54,9 +54,9 @@ void loop() {
     }
   }
 
-  int valueMotionSensorCorridor1 = digitalRead(pinMotionSensorCorridor1);
-  int valueMotionSensorCorridor2 = digitalRead(pinMotionSensorCorridor2);
-  bool isMotionSensorCorridor = valueMotionSensorCorridor1 > 0 || valueMotionSensorCorridor2 > 0;
+  const int valueMotionSensorCorridor1 = digitalRead(pinMotionSensorCorridor1);
+  const int valueMotionSensorCorridor2 = digitalRead(pinMotionSensorCorridor2);
+  const bool isMotionSensorCorridor = valueMotionSensorCorridor1 == HIGH || valueMotionSensorCorridor2 == HIGH;
 
   if (isMotionSensorCorridor) {
     corridorTimeOn = millis();
